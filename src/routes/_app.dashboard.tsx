@@ -1,10 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { Flame, Play, TrendingUp, Clock, Dumbbell, Loader } from "lucide-react";
+import { Flame, Play, TrendingUp, Clock, Dumbbell, Loader, Trash2 } from "lucide-react";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 import { useWorkout } from "../context/WorkoutContext";
 import { useUnits } from "../context/UnitsContext";
-import { useDashboardData } from "../hooks/use-workout-history";
+import { useDashboardData, useDeleteWorkout } from "../hooks/use-workout-history";
 
 export const Route = createFileRoute("/_app/dashboard")({
   head: () => ({
@@ -29,6 +29,14 @@ function Dashboard() {
     recentWorkouts,
     isLoading,
   } = useDashboardData();
+
+  const deleteWorkout = useDeleteWorkout();
+
+  const handleDelete = (id: string) => {
+    if (window.confirm("Delete this workout?")) {
+      deleteWorkout.mutate(id);
+    }
+  };
 
   const handleStartWorkout = () => {
     startWorkout();
@@ -170,11 +178,20 @@ function Dashboard() {
                     ))}
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="numeric font-display text-xl">{w.durationMin}m</div>
-                  <div className="text-xs text-muted-foreground numeric">
-                    {format(w.volumeKg, 0)}
+                <div className="flex items-center gap-3">
+                  <div className="text-right">
+                    <div className="numeric font-display text-xl">{w.durationMin}m</div>
+                    <div className="text-xs text-muted-foreground numeric">
+                      {format(w.volumeKg, 0)}
+                    </div>
                   </div>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handleDelete(w.id); }}
+                    className="rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-destructive"
+                    title="Delete workout"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
                 </div>
               </div>
             ))

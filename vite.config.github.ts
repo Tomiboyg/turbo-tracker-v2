@@ -5,7 +5,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
   plugins: [tailwindcss(), react(), tsconfigPaths()],
-  base: "./",
+  base: "/turbo-tracker-v2/",
   build: {
     outDir: "dist",
     emptyOutDir: true,

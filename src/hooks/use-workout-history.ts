@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../context/AuthContext";
 import { supabase } from "../lib/supabase";
 import type { WorkoutRow, WorkoutExerciseRow, WorkoutSetRow } from "../lib/database.types";
@@ -309,4 +309,21 @@ function formatRelativeDate(date: Date): string {
   if (days === 1) return "Yesterday";
   if (days < 7) return `${days} days ago`;
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+export function useDeleteWorkout() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (workoutId: string) => {
+      const { error } = await supabase
+        .from("workouts")
+        .delete()
+        .eq("id", workoutId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["workouts"] });
+    },
+  });
 }
