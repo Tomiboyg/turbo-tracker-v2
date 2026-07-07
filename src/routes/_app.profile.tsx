@@ -7,7 +7,7 @@ import { useUnits } from "../context/UnitsContext";
 export const Route = createFileRoute("/_app/profile")({
   head: () => ({
     meta: [
-      { title: "Profile — IRONLOG" },
+      { title: "Profile — Turbo tracker" },
       { name: "description", content: "Your account and preferences." },
     ],
   }),

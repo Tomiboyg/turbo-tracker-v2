@@ -9,7 +9,7 @@ import { useDashboardData, useDeleteWorkout } from "../hooks/use-workout-history
 export const Route = createFileRoute("/_app/dashboard")({
   head: () => ({
     meta: [
-      { title: "Dashboard — IRONLOG" },
+      { title: "Dashboard — Turbo tracker" },
       { name: "description", content: "Your training overview." },
     ],
   }),

@@ -8,7 +8,7 @@ import { useWorkout } from "../context/WorkoutContext";
 export const Route = createFileRoute("/_app/library")({
   head: () => ({
     meta: [
-      { title: "Exercise library — IRONLOG" },
+      { title: "Exercise library — Turbo tracker" },
       { name: "description", content: "Browse presets and add your own custom exercises." },
     ],
   }),

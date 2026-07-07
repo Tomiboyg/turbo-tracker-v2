@@ -81,14 +81,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "IRONLOG — Track every rep" },
+      { title: "Turbo tracker — Track every rep" },
       {
         name: "description",
         content:
-          "IRONLOG is a Gymshark-inspired workout tracker with an exercise library, RPE logging, and progress charts for every lift.",
+          "Turbo tracker is a Gymshark-inspired workout tracker with an exercise library, RPE logging, and progress charts for every lift.",
       },
-      { name: "author", content: "IRONLOG" },
-      { property: "og:title", content: "IRONLOG — Track every rep" },
+      { name: "author", content: "Turbo tracker" },
+      { property: "og:title", content: "Turbo tracker — Track every rep" },
       {
         property: "og:description",
         content: "Log workouts with RPE, build progress charts, and own your training.",

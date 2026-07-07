@@ -26,7 +26,7 @@ import {
 export const Route = createFileRoute("/_app/progress")({
   head: () => ({
     meta: [
-      { title: "Progress — IRONLOG" },
+      { title: "Progress — Turbo tracker" },
       { name: "description", content: "Charts and PRs across your training." },
     ],
   }),

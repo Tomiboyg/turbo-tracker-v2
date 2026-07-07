@@ -36,7 +36,7 @@ function AppLayout() {
           <div className="grid h-9 w-9 place-items-center rounded-md bg-volt text-volt-foreground">
             <Dumbbell className="h-5 w-5" strokeWidth={2.5} />
           </div>
-          <span className="font-display text-2xl tracking-wide">IRONLOG</span>
+          <span className="font-display text-2xl tracking-wide">Turbo tracker</span>
         </Link>
         <nav className="flex flex-col gap-1">
           {NAV.map(({ to, label, icon: Icon }) => {
@@ -74,7 +74,7 @@ function AppLayout() {
           <div className="grid h-8 w-8 place-items-center rounded-md bg-volt text-volt-foreground">
             <Dumbbell className="h-4 w-4" strokeWidth={2.5} />
           </div>
-          <span className="font-display text-xl tracking-wide">IRONLOG</span>
+          <span className="font-display text-xl tracking-wide">Turbo tracker</span>
         </Link>
         {active ? (
           <Link

@@ -10,7 +10,7 @@ import { formatDuration } from "./_app";
 export const Route = createFileRoute("/_app/workout")({
   head: () => ({
     meta: [
-      { title: "Workout — IRONLOG" },
+      { title: "Workout — Turbo tracker" },
       { name: "description", content: "Log the current session." },
     ],
   }),
