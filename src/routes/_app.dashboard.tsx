@@ -163,7 +163,8 @@ function Dashboard() {
             recentWorkouts.map((w) => (
               <div
                 key={w.id}
-                className="flex items-center justify-between rounded-xl border border-border bg-card px-5 py-4"
+                onClick={() => navigate({ to: "/workout/$workoutId", params: { workoutId: w.id } })}
+                className="flex cursor-pointer items-center justify-between rounded-xl border border-border bg-card px-5 py-4 transition-colors hover:bg-accent"
               >
                 <div>
                   <div className="text-xs uppercase tracking-widest text-muted-foreground">

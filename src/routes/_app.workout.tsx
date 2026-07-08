@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Play, Plus, Search, Timer, Trash2, X, Check, Loader } from "lucide-react";
 import { useWorkout, type WorkoutSet } from "../context/WorkoutContext";
@@ -20,6 +20,9 @@ export const Route = createFileRoute("/_app/workout")({
 const RPE_STEPS = [6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10];
 
 function WorkoutPage() {
+  const routerState = useRouterState();
+  const hasDetailChild = routerState.matches.some((m) => m.routeId === "/_app/workout/$workoutId");
+
   const {
     active,
     startWorkout,
@@ -39,6 +42,8 @@ function WorkoutPage() {
   const { toDisplay, fromDisplay, label } = useUnits();
   const [pickerOpen, setPickerOpen] = useState(false);
   const navigate = useNavigate();
+
+  if (hasDetailChild) return <Outlet />;
 
   const handleFinish = async () => {
     await finishWorkout();

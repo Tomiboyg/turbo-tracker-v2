@@ -327,3 +327,106 @@ export function useDeleteWorkout() {
     },
   });
 }
+
+export function useWorkoutById(workoutId: string) {
+  const { user } = useAuth();
+
+  return useQuery({
+    queryKey: ["workout", workoutId],
+    enabled: !!user && !!workoutId,
+    queryFn: async () => {
+      if (!user) return null;
+
+      const { data, error } = await supabase
+        .from("workouts")
+        .select("*, exercises:workout_exercises(*, sets:workout_sets(*))")
+        .eq("id", workoutId)
+        .single();
+
+      if (error) throw error;
+      return data as WorkoutWithDetails;
+    },
+  });
+}
+
+type UpdateWorkoutInput = {
+  id: string;
+  name: string;
+  exercises: {
+    exerciseId: string;
+    restSec: number;
+    sets: {
+      weightKg: number;
+      reps: number;
+      rpe: number | null;
+      done: boolean;
+    }[];
+  }[];
+};
+
+export function useUpdateWorkout() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: UpdateWorkoutInput) => {
+      const doneVolume = input.exercises.reduce((sum, we) => {
+        for (const s of we.sets) {
+          if (s.done) sum += s.weightKg * s.reps;
+        }
+        return sum;
+      }, 0);
+
+      const { error: wErr } = await supabase
+        .from("workouts")
+        .update({ name: input.name, volume_kg: doneVolume } as never)
+        .eq("id", input.id);
+      if (wErr) throw wErr;
+
+      const { data: existing, error: exErr } = await supabase
+        .from("workout_exercises")
+        .select("id")
+        .eq("workout_id", input.id);
+      if (exErr) throw exErr;
+
+      if (existing.length > 0) {
+        const ids = existing.map((r) => r.id);
+        await supabase.from("workout_sets").delete().in("workout_exercise_id", ids);
+        await supabase.from("workout_exercises").delete().eq("workout_id", input.id);
+      }
+
+      for (let i = 0; i < input.exercises.length; i++) {
+        const we = input.exercises[i];
+        const { data: weRow, error: weErr } = await supabase
+          .from("workout_exercises")
+          .insert({
+            workout_id: input.id,
+            exercise_id: we.exerciseId,
+            rest_sec: we.restSec,
+            sequence_order: i,
+          } as never)
+          .select("id")
+          .single();
+
+        if (weErr || !weRow) {
+          console.error("Failed to save workout exercise", weErr);
+          continue;
+        }
+
+        for (let j = 0; j < we.sets.length; j++) {
+          const s = we.sets[j];
+          await supabase.from("workout_sets").insert({
+            workout_exercise_id: weRow.id,
+            weight_kg: s.weightKg,
+            reps: s.reps,
+            rpe: s.rpe,
+            sequence_order: j,
+            done: s.done,
+          } as never);
+        }
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["workouts"] });
+    },
+  });
+}
