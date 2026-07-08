@@ -3,6 +3,14 @@ import { supabase } from "../lib/supabase";
 import { useAuth } from "./AuthContext";
 import type { Exercise } from "../lib/mock-data";
 
+const STORAGE_KEY = "turbo-active-workout";
+const MAX_SESSION_MS = 6 * 3600 * 1000;
+
+type StoredWorkout = {
+  startedAt: number;
+  exercises: WorkoutExercise[];
+};
+
 export type WorkoutSet = {
   id: string;
   weightKg: number;
@@ -44,9 +52,35 @@ function uid() {
 
 export function WorkoutProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
-  const [startedAt, setStartedAt] = useState<number | null>(null);
+  const [startedAt, setStartedAt] = useState<number | null>(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      const stored: StoredWorkout = JSON.parse(raw);
+      if (Date.now() - stored.startedAt > MAX_SESSION_MS) {
+        localStorage.removeItem(STORAGE_KEY);
+        return null;
+      }
+      return stored.startedAt;
+    } catch {
+      return null;
+    }
+  });
   const [elapsedSec, setElapsedSec] = useState(0);
-  const [exercises, setExercises] = useState<WorkoutExercise[]>([]);
+  const [exercises, setExercises] = useState<WorkoutExercise[]>(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return [];
+      const stored: StoredWorkout = JSON.parse(raw);
+      if (Date.now() - stored.startedAt > MAX_SESSION_MS) {
+        localStorage.removeItem(STORAGE_KEY);
+        return [];
+      }
+      return stored.exercises;
+    } catch {
+      return [];
+    }
+  });
   const [restRemaining, setRestRemaining] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const restRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -68,6 +102,14 @@ export function WorkoutProvider({ children }: { children: ReactNode }) {
     const t = setTimeout(() => setRestRemaining((r) => (r === null ? null : r - 1)), 1000);
     return () => clearTimeout(t);
   }, [restRemaining]);
+
+  useEffect(() => {
+    if (startedAt && exercises.length > 0) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ startedAt, exercises }));
+    } else if (!startedAt) {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  }, [startedAt, exercises]);
 
   const startWorkout = () => {
     setStartedAt(Date.now());
