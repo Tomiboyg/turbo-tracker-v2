@@ -17,7 +17,7 @@ function getWeekId(date: Date): string {
   const day = d.getDay();
   const mon = new Date(d);
   mon.setDate(d.getDate() - ((day + 6) % 7));
-  return `${mon.getMonth() + 1}/${mon.getDate()}`;
+  return `${String(mon.getDate()).padStart(2, "0")}/${String(mon.getMonth() + 1).padStart(2, "0")}`;
 }
 
 function getWeekStart(date: Date): Date {
