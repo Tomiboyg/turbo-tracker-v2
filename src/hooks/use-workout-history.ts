@@ -13,9 +13,11 @@ export type MuscleSplit = { muscle: string; value: number };
 export type OneRmPoint = { week: string; oneRm: number };
 
 function getWeekId(date: Date): string {
-  const now = new Date();
-  const diff = Math.floor((now.getTime() - date.getTime()) / (7 * 86400000));
-  return `W${Math.max(0, 8 - diff)}`;
+  const d = new Date(date);
+  const day = d.getDay();
+  const mon = new Date(d);
+  mon.setDate(d.getDate() - ((day + 6) % 7));
+  return `${mon.getMonth() + 1}/${mon.getDate()}`;
 }
 
 function getWeekStart(date: Date): Date {
