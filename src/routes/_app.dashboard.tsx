@@ -1,9 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Flame, Play, TrendingUp, Clock, Dumbbell, Loader, Trash2 } from "lucide-react";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 import { useWorkout } from "../context/WorkoutContext";
 import { useUnits } from "../context/UnitsContext";
+import { useExerciseLibrary } from "../context/ExerciseLibraryContext";
 import { useDashboardData, useDeleteWorkout } from "../hooks/use-workout-history";
 
 export const Route = createFileRoute("/_app/dashboard")({
@@ -19,6 +20,12 @@ export const Route = createFileRoute("/_app/dashboard")({
 function Dashboard() {
   const { format, toDisplay } = useUnits();
   const { startWorkout, active } = useWorkout();
+  const { exercises: libExercises } = useExerciseLibrary();
+  const exerciseLookup = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const ex of libExercises) map[ex.id] = ex.name;
+    return map;
+  }, [libExercises]);
   const navigate = useNavigate();
   const {
     workoutsThisWeek,
@@ -28,7 +35,7 @@ function Dashboard() {
     weeklyVolume,
     recentWorkouts,
     isLoading,
-  } = useDashboardData();
+  } = useDashboardData(exerciseLookup);
 
   const deleteWorkout = useDeleteWorkout();
 

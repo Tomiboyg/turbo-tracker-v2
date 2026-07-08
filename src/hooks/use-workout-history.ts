@@ -235,7 +235,7 @@ export function useWorkoutHistory() {
   });
 }
 
-export function useDashboardData() {
+export function useDashboardData(exerciseLookup?: Record<string, string>) {
   const { data: workouts = [], isLoading } = useWorkoutHistory();
   const now = new Date();
 
@@ -256,7 +256,7 @@ export function useDashboardData() {
       we.sets
         .filter((s) => s.done && s.weight_kg > 0)
         .map((s) => ({
-          exercise: we.exercise_id,
+          exercise: exerciseLookup?.[we.exercise_id] ?? we.exercise_id,
           weightKg: s.weight_kg,
           reps: s.reps,
           rpe: s.rpe ?? 0,
