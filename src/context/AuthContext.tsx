@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
-import type { ProfileRow } from "../lib/database.types";
+import type { ProfileRow, ProfileUpdate } from "../lib/database.types";
 
 type AuthContextValue = {
   user: User | null;
@@ -11,6 +11,7 @@ type AuthContextValue = {
   signUp: (name: string, email: string, password: string) => Promise<string | null>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
+  updateProfile: (updates: ProfileUpdate) => Promise<string | null>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -73,6 +74,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut();
   };
 
+  const updateProfile: AuthContextValue["updateProfile"] = async (updates) => {
+    if (!user) return "Not authenticated";
+    const { error } = await supabase
+      .from("profiles")
+      .update(updates as never)
+      .eq("id", user.id);
+    if (error) return error.message;
+    await refreshProfile();
+    return null;
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -83,6 +95,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signUp,
         signOut,
         refreshProfile,
+        updateProfile,
       }}
     >
       {children}

@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider } from "../context/AuthContext";
+import { ThemeProvider } from "../context/ThemeContext";
 import { UnitsProvider } from "../context/UnitsContext";
 import { WorkoutProvider } from "../context/WorkoutContext";
 import { ExerciseLibraryProvider } from "../context/ExerciseLibraryContext";
@@ -135,13 +136,15 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <UnitsProvider>
-          <ExerciseLibraryProvider>
-            <WorkoutProvider>
-              <Outlet />
-            </WorkoutProvider>
-          </ExerciseLibraryProvider>
-        </UnitsProvider>
+        <ThemeProvider>
+          <UnitsProvider>
+            <ExerciseLibraryProvider>
+              <WorkoutProvider>
+                <Outlet />
+              </WorkoutProvider>
+            </ExerciseLibraryProvider>
+          </UnitsProvider>
+        </ThemeProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

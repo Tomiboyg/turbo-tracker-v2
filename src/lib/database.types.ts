@@ -35,11 +35,13 @@ export interface Database {
 export interface ProfileRow {
   id: string;
   name: string;
+  avatar_url: string | null;
+  theme: string | null;
   weight_unit: "kg" | "lb";
   created_at: string;
 }
-export type ProfileInsert = { id: string; name?: string; weight_unit?: "kg" | "lb" };
-export type ProfileUpdate = { name?: string; weight_unit?: "kg" | "lb" };
+export type ProfileInsert = { id: string; name?: string; avatar_url?: string | null; theme?: string | null; weight_unit?: "kg" | "lb" };
+export type ProfileUpdate = { name?: string; avatar_url?: string | null; theme?: string | null; weight_unit?: "kg" | "lb" };
 
 export interface ExerciseRow {
   id: string;

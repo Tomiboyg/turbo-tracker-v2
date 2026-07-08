@@ -7,6 +7,8 @@
 create table public.profiles (
   id uuid references auth.users on delete cascade primary key,
   name text not null default 'Athlete',
+  avatar_url text,
+  theme text default 'volt',
   weight_unit text not null default 'kg' check (weight_unit in ('kg', 'lb')),
   created_at timestamp with time zone not null default timezone('utc'::text, now())
 );
