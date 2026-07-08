@@ -148,15 +148,13 @@ export function computeMuscleSplit(workouts: WorkoutWithDetails[], exerciseLooku
     treadmill: "Cardio",
   };
   const muscleTotals: Record<string, number> = {};
-  let totalMuscleSets = 0;
   for (const [exId, count] of Object.entries(counts)) {
     const muscle = muscleMap[exId] || exerciseLookup?.[exId] || "Other";
     muscleTotals[muscle] = (muscleTotals[muscle] || 0) + count;
-    totalMuscleSets += count;
   }
   return Object.entries(muscleTotals).map(([muscle, value]) => ({
     muscle,
-    value: Math.round((value / totalMuscleSets) * 100),
+    value,
   }));
 }
 
