@@ -91,7 +91,7 @@ export function computeWeeklySessions(workouts: WorkoutRow[]): WeeklySessions[] 
   return Object.entries(weeks).map(([week, sessions]) => ({ week, sessions }));
 }
 
-export function computeMuscleSplit(workouts: WorkoutWithDetails[]): MuscleSplit[] {
+export function computeMuscleSplit(workouts: WorkoutWithDetails[], exerciseLookup?: Record<string, string>): MuscleSplit[] {
   const counts: Record<string, number> = {};
   let total = 0;
   for (const w of workouts) {
@@ -150,7 +150,7 @@ export function computeMuscleSplit(workouts: WorkoutWithDetails[]): MuscleSplit[
   const muscleTotals: Record<string, number> = {};
   let totalMuscleSets = 0;
   for (const [exId, count] of Object.entries(counts)) {
-    const muscle = muscleMap[exId] || "Other";
+    const muscle = muscleMap[exId] || exerciseLookup?.[exId] || "Other";
     muscleTotals[muscle] = (muscleTotals[muscle] || 0) + count;
     totalMuscleSets += count;
   }
@@ -284,11 +284,11 @@ export function useDashboardData() {
   };
 }
 
-export function useProgressData() {
+export function useProgressData(exerciseLookup?: Record<string, string>) {
   const { data: workouts = [], isLoading } = useWorkoutHistory();
   const weeklySessions = computeWeeklySessions(workouts);
   const weeklyVolume = computeWeeklyVolume(workouts);
-  const muscleSplit = computeMuscleSplit(workouts);
+  const muscleSplit = computeMuscleSplit(workouts, exerciseLookup);
   const prs = computePRs(workouts);
 
   return {

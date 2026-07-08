@@ -49,7 +49,12 @@ function ProgressPage() {
   const [tab, setTab] = useState<Tab>("Overview");
   const { format, toDisplay, label } = useUnits();
   const { exercises: libExercises } = useExerciseLibrary();
-  const { workouts, weeklySessions, weeklyVolume, muscleSplit, prs, isLoading } = useProgressData();
+  const exerciseLookup = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const ex of libExercises) map[ex.id] = ex.muscle;
+    return map;
+  }, [libExercises]);
+  const { workouts, weeklySessions, weeklyVolume, muscleSplit, prs, isLoading } = useProgressData(exerciseLookup);
   const [selectedEx, setSelectedEx] = useState<string>("");
 
   const exerciseOptions = useMemo(() => {
